@@ -261,16 +261,9 @@ call s:WithConceal('html_c_e', 'syn match pandocHTMLCommentEnd /-->/ contained',
 " Unset current_syntax so the 2nd include will work
 unlet b:current_syntax
 syn include @LATEX syntax/tex.vim
-if index(g:pandoc#syntax#conceal#blacklist, 'inlinemath') == -1
-    " Can't use WithConceal here because it will mess up all other conceals
-    " when dollar signs are used normally. It must be skipped entirely if
-    " inlinemath is blacklisted
-    syn region pandocLaTeXInlineMath start=/\v\\@<!\$\S@=/ end=/\v\\@<!\$\d@!/ keepend contains=@LATEX
-    syn region pandocLaTeXInlineMath start=/\\\@<!\\(/ end=/\\\@<!\\)/ keepend contains=@LATEX
-endif
-syn match pandocEscapedDollar /\\\$/ conceal cchar=$
-syn match pandocProtectedFromInlineLaTeX /\\\@<!\${.*}\(\(\s\|[[:punct:]]\)\([^$]*\|.*\(\\\$.*\)\{2}\)\n\n\|$\)\@=/ display
-" contains=@LATEX
+" Inline math with \(...\) delimiters only (dollar sign handling disabled)
+syn region pandocLaTeXInlineMath start=/\\\@<!\\(/ end=/\\\@<!\\)/ keepend contains=@LATEX
+" Display math (single $ inline math disabled to allow normal dollar signs like $100)
 syn region pandocLaTeXMathBlock start=/\$\$/ end=/\$\$/ keepend contains=@LATEX
 syn region pandocLaTeXMathBlock start=/\\\@<!\\\[/ end=/\\\@<!\\\]/ keepend contains=@LATEX
 syn match pandocLaTeXCommand /\\[[:alpha:]]\+\(\({.\{-}}\)\=\(\[.\{-}\]\)\=\)*/ contains=@LATEX
